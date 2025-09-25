@@ -1,5 +1,5 @@
 /* === Page full screen === */
-body, html, #root {
+ #root {
   margin: 0;
   height: 100%;
   font-family: 'Poppins', sans-serif;
