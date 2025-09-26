@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { GraduationCap, Users, Trophy, BookOpen, ChevronRight, Star, Play, CheckCircle, ArrowRight, Menu, X, Globe, Clock, Award, Target, Heart, Lightbulb, Shield, MessageCircle, Send, Mail, Phone, MapPin, Building2, Briefcase, Brain, Users as Users2, Zap, BookOpenCheck, Scale } from 'lucide-react';
+import { GraduationCap, Users, Trophy, ChevronRight, Star, Play, CheckCircle, ArrowRight, Menu, X, Globe, Clock, Award, Target, Heart, Lightbulb, Shield, MessageCircle, Send, Mail, Phone, MapPin, Building2, Briefcase, Brain, Users as Users2, Zap, BookOpenCheck, Scale } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 function App() {
+  const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeFeedback, setActiveFeedback] = useState(0);
@@ -137,9 +139,12 @@ function App() {
               <a href="#apropos" className="text-gray-700 hover:text-blue-700 font-medium transition-colors">À propos</a>
               <a href="#programmes" className="text-gray-700 hover:text-blue-700 font-medium transition-colors">Programmes</a>
               <a href="#temoignages" className="text-gray-700 hover:text-blue-700 font-medium transition-colors">Témoignages</a>
-              <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2.5 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 transform hover:scale-105">
-                Admissions 2024
-              </button>
+              <button
+      className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2.5 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+      onClick={() => navigate("/login")}  // التنقل للصفحة
+    >
+      Admissions 2024
+    </button>
             </div>
 
             <button 
@@ -159,9 +164,12 @@ function App() {
               <a href="#apropos" className="block text-gray-700 hover:text-blue-700 font-medium py-2">À propos</a>
               <a href="#programmes" className="block text-gray-700 hover:text-blue-700 font-medium py-2">Programmes</a>
               <a href="#temoignages" className="block text-gray-700 hover:text-blue-700 font-medium py-2">Témoignages</a>
-              <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold">
-                Admissions 2024
-              </button>
+               <button
+      className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold"
+      onClick={() => navigate("/login")}
+    >
+      Admissions 2025
+    </button>
             </div>
           </div>
         )}
@@ -228,7 +236,7 @@ function App() {
                       <img 
                         key={i} 
                         src={src} 
-                        alt={Alumni ${i + 1}}
+                        alt={`Alumni ${i + 1}`}
                         className="w-12 h-12 rounded-full object-cover border-3 border-white shadow-lg"
                       />
                     ))}
@@ -414,7 +422,7 @@ function App() {
                 className="group bg-white p-8 lg:p-10 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 border border-gray-100 hover:border-gray-200"
               >
                 <div className="flex items-start justify-between mb-6">
-                  <div className={w-18 h-18 bg-gradient-to-br ${program.color} rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300}>
+                  <div className={`w-18 h-18 bg-gradient-to-br ${program.color} rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
                     <div className="text-white">
                       {program.icon}
                     </div>

@@ -1,8 +1,7 @@
-// src/AppRouter.js
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import App from './App';
-import Login from './login'; // Assurez-vous que le chemin est correct
+import Login from './Login'; // Assurez-vous que le fichier s'appelle Login.tsx
 
 export default function AppRouter() {
   return (
