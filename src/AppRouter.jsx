@@ -15,6 +15,9 @@ export default function AppRouter() {
        <Route path="/prof" element={<Dashboard />} />
         <Route path="/prof/appel" element={<appel />} />
         <Route path="/prof/cours" element={<Cours />} />
+ 
+
+        
       </Routes>
     </BrowserRouter>
   );
