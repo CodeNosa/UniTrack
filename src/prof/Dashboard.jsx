@@ -1,344 +1,364 @@
+// src/prof/DashboardProf.jsx
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
-// Single-file React app containing professor pages: Dashboard, CoursePage, StudentList, GradeEntry,
-// AbsenceManagement, Messaging, PlanningRequest. Uses Tailwind CSS for rapid styling.
-
-// Mock data (replace with API / Firebase calls in real app)
-const mockCourses = [
-  { id: 'c1', title: 'Systèmes Distribués', nextSession: '2025-10-02 10:00', students: 42 },
-  { id: 'c2', title: 'Réseaux', nextSession: '2025-10-03 08:30', students: 36 },
-];
-
-const mockStudents = [
-  { id: 's1', name: 'Amine Ben', presence: true, avg: 14.2 },
-  { id: 's2', name: 'Lina Trabelsi', presence: false, avg: 12.5 },
-  { id: 's3', name: 'Sofia Gharbi', presence: true, avg: 16.0 },
-];
-
-// --- Layout ---
-function Sidebar() {
-  return (
-    <aside className="w-64 bg-white border-r min-h-screen p-4">
-      <h2 className="text-xl font-semibold mb-6">Prof Dashboard</h2>
-      <nav className="space-y-2">
-        <Link to="/" className="block py-2 px-3 rounded hover:bg-gray-100">Dashboard</Link>
-        <Link to="/courses" className="block py-2 px-3 rounded hover:bg-gray-100">Cours</Link>
-        <Link to="/students" className="block py-2 px-3 rounded hover:bg-gray-100">Étudiants</Link>
-        <Link to="/grades" className="block py-2 px-3 rounded hover:bg-gray-100">Saisie des notes</Link>
-        <Link to="/absences" className="block py-2 px-3 rounded hover:bg-gray-100">Gestion des absences</Link>
-        <Link to="/messages" className="block py-2 px-3 rounded hover:bg-gray-100">Messagerie</Link>
-        <Link to="/planning" className="block py-2 px-3 rounded hover:bg-gray-100">Planning</Link>
-      </nav>
-    </aside>
-  );
-}
-
-function Topbar() {
-  return (
-    <header className="flex items-center justify-between p-4 border-b bg-white">
-      <div className="flex items-center gap-4">
-        <h1 className="text-2xl font-bold">Espace Prof</h1>
-        <div className="text-sm text-gray-500">Université - Année 2025</div>
-      </div>
-      <div className="flex items-center gap-4">
-        <div className="text-sm">Prof. Sami</div>
-        <div className="w-8 h-8 rounded-full bg-gray-200" />
-      </div>
-    </header>
-  );
-}
-
-// --- Pages ---
-function DashboardPage() {
-  return (
-    <div className="p-6">
-      <h2 className="text-xl font-semibold mb-4">Tableau de bord</h2>
-      <div className="grid grid-cols-3 gap-4">
-        {mockCourses.map((c) => (
-          <div key={c.id} className="p-4 border rounded bg-white">
-            <h3 className="font-semibold">{c.title}</h3>
-            <p className="text-sm text-gray-500">Prochaine séance: <strong>{c.nextSession}</strong></p>
-            <p className="mt-2">Nombre d'étudiants: <strong>{c.students}</strong></p>
-            <Link to={`/courses/${c.id}`} className="inline-block mt-3 text-sm text-indigo-600">Voir le cours</Link>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function CoursesPage() {
-  return (
-    <div className="p-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold mb-4">Cours</h2>
-        <button className="px-4 py-2 bg-indigo-600 text-white rounded">Ajouter un cours</button>
-      </div>
-
-      <div className="space-y-4">
-        {mockCourses.map((c) => (
-          <div key={c.id} className="p-4 border rounded bg-white flex justify-between items-center">
-            <div>
-              <h3 className="font-medium">{c.title}</h3>
-              <p className="text-sm text-gray-500">Prochaine séance: {c.nextSession}</p>
-            </div>
-            <div className="flex gap-2">
-              <Link to={`/courses/${c.id}`} className="px-3 py-1 border rounded">Ouvrir</Link>
-              <button className="px-3 py-1 border rounded">Éditer</button>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function CoursePage({ courseId }) {
-  const course = mockCourses.find((c) => c.id === courseId) || mockCourses[0];
-  return (
-    <div className="p-6">
-      <h2 className="text-xl font-semibold">{course.title}</h2>
-      <div className="mt-4 grid grid-cols-3 gap-4">
-        <div className="col-span-2 p-4 border rounded bg-white">
-          <h3 className="font-medium mb-2">Contenus</h3>
-          <ul className="space-y-2">
-            <li className="p-2 border rounded">PDF: Chapitre 1 <button className="ml-3 text-sm text-indigo-600">Télécharger</button></li>
-            <li className="p-2 border rounded">Vidéo: Introduction <button className="ml-3 text-sm text-indigo-600">Voir</button></li>
-          </ul>
-
-          <div className="mt-6">
-            <h4 className="font-medium mb-2">Devoirs</h4>
-            <div className="p-3 border rounded">
-              <div className="flex justify-between items-center">
-                <div>
-                  <div className="font-medium">Devoir 1 — Réseaux</div>
-                  <div className="text-sm text-gray-500">Date de rendu: 2025-10-10</div>
-                </div>
-                <button className="px-3 py-1 border rounded">Voir les rendus</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="p-4 border rounded bg-white">
-          <h3 className="font-medium mb-2">Discussions</h3>
-          <div className="text-sm text-gray-600">Aucun fil actif — encourager les étudiants à poser des questions ici.</div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function StudentsPage() {
-  return (
-    <div className="p-6">
-      <h2 className="text-xl font-semibold mb-4">Liste des étudiants</h2>
-      <div className="bg-white border rounded p-4">
-        <table className="w-full table-auto">
-          <thead>
-            <tr className="text-left">
-              <th className="p-2">Nom</th>
-              <th className="p-2">Présence</th>
-              <th className="p-2">Moyenne</th>
-              <th className="p-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {mockStudents.map((s) => (
-              <tr key={s.id} className="border-t">
-                <td className="p-2">{s.name}</td>
-                <td className="p-2">{s.presence ? 'Présent' : 'Absent'}</td>
-                <td className="p-2">{s.avg}</td>
-                <td className="p-2">
-                  <button className="px-2 py-1 border rounded mr-2">Profil</button>
-                  <button className="px-2 py-1 border rounded">Marquer présence</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-}
-
-function GradesPage() {
-  const [grades, setGrades] = React.useState(
-    mockStudents.map((s) => ({ studentId: s.id, name: s.name, grade: 0 }))
-  );
-
-  const updateGrade = (idx, value) => {
-    const copy = [...grades];
-    copy[idx].grade = Number(value);
-    setGrades(copy);
-  };
-
-  const computeAverage = () => {
-    if (!grades.length) return 0;
-    const sum = grades.reduce((acc, g) => acc + (g.grade || 0), 0);
-    return (sum / grades.length).toFixed(2);
-  };
-
-  return (
-    <div className="p-6">
-      <h2 className="text-xl font-semibold mb-4">Saisie des notes</h2>
-      <div className="bg-white border rounded p-4">
-        <div className="mb-4">Barème: <strong>20</strong> — Coef (exemple): <strong>1</strong></div>
-        <table className="w-full table-auto">
-          <thead>
-            <tr className="text-left">
-              <th className="p-2">Étudiant</th>
-              <th className="p-2">Note</th>
-            </tr>
-          </thead>
-          <tbody>
-            {grades.map((g, i) => (
-              <tr key={g.studentId} className="border-t">
-                <td className="p-2">{g.name}</td>
-                <td className="p-2">
-                  <input type="number" min="0" max="20" value={g.grade} onChange={(e) => updateGrade(i, e.target.value)} className="border p-1 w-24" />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <div className="mt-4">Moyenne calculée: <strong>{computeAverage()}</strong></div>
-        <div className="mt-4">
-          <button className="px-4 py-2 bg-green-600 text-white rounded">Enregistrer les notes</button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function AbsencesPage() {
-  const [students, setStudents] = React.useState(mockStudents.map((s) => ({ ...s })));
-
-  const togglePresence = (id) => {
-    setStudents((prev) => prev.map((p) => (p.id === id ? { ...p, presence: !p.presence } : p)));
-  };
-
-  const markAllAbsent = () => {
-    setStudents((prev) => prev.map((p) => ({ ...p, presence: false })));
-  };
-
-  return (
-    <div className="p-6">
-      <h2 className="text-xl font-semibold mb-4">Gestion des absences</h2>
-      <div className="mb-4">
-        <button className="px-3 py-1 border rounded mr-2" onClick={markAllAbsent}>Marquer tous absents</button>
-        <button className="px-3 py-1 border rounded">Exporter CSV</button>
-      </div>
-      <div className="bg-white border rounded p-4">
-        {students.map((s) => (
-          <div key={s.id} className="flex items-center justify-between border-b py-2">
-            <div>
-              <div className="font-medium">{s.name}</div>
-              <div className="text-sm text-gray-500">Commentaires: <em>—</em></div>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="text-sm">{s.presence ? 'Présent' : 'Absent'}</div>
-              <button className="px-2 py-1 border rounded" onClick={() => togglePresence(s.id)}>Basculer</button>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function MessagesPage() {
-  const [to, setTo] = React.useState('course');
-  const [message, setMessage] = React.useState('');
-
-  const send = () => {
-    alert(`Message envoyé à ${to}: ${message}`);
-    setMessage('');
-  };
-
-  return (
-    <div className="p-6">
-      <h2 className="text-xl font-semibold mb-4">Messagerie</h2>
-      <div className="bg-white border rounded p-4">
-        <div className="mb-3">
-          <label className="block text-sm">Envoyer à</label>
-          <select value={to} onChange={(e) => setTo(e.target.value)} className="border p-2 w-64">
-            <option value="course">Tous les étudiants du cours</option>
-            <option value="groupA">Groupe A</option>
-            <option value="student_s1">Étudiant individuel</option>
-          </select>
-        </div>
-        <textarea value={message} onChange={(e) => setMessage(e.target.value)} className="w-full border p-2 h-28" placeholder="Écrire le message..." />
-        <div className="mt-3">
-          <button onClick={send} className="px-4 py-2 bg-indigo-600 text-white rounded">Envoyer</button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function PlanningPage() {
+export default function DashboardProf() {
   const navigate = useNavigate();
-  const [request, setRequest] = React.useState({ date: '', reason: '' });
 
-  const submitRequest = () => {
-    // In a real app: POST to admin API
-    alert('Demande envoyée au service administratif');
-    navigate('/');
+  const stats = {
+    tauxPresence: 87,
+    nbEtudiants: 42,
+    coursEnCours: 'Algorithmes avancés',
+    heure: '10h30 - 12h00',
+  };
+
+  const profile = {
+    nom: 'Dr. Sami Ben Ali',
+    role: 'Enseignant - Informatique',
+    avatarInitials: 'SB',
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('isLoggedIn');
+    navigate('/login');
+  };
+
+  const cardVariant = {
+    hidden: { opacity: 0, y: 16 },
+    visible: (i = 1) => ({
+      opacity: 1,
+      y: 0,
+      transition: { delay: i * 0.08, duration: 0.6, ease: [0.34, 1.56, 0.64, 1] },
+    }),
+  };
+
+  const buttonHover = {
+    scale: 1.03,
+    boxShadow: '0 4px 12px rgba(255, 215, 0, 0.25)',
+    transition: { duration: 0.25 },
+  };
+
+  const annonces = [
+    {
+      id: 1,
+      title: "Pas de cours lundi prochain",
+      date: "12 avr. 2025",
+      content: "En raison d’un événement national, tous les cours sont suspendus lundi.",
+      type: "important",
+    },
+    {
+      id: 2,
+      title: "Eid Mubarak !",
+      date: "10 avr. 2025",
+      content: "L’équipe de codeNOSA vous souhaite une excellente fête de l’Aïd.",
+      type: "info",
+    },
+    {
+      id: 3,
+      title: "Mise à jour du système de notes",
+      date: "8 avr. 2025",
+      content: "Nouvelle interface disponible à partir de lundi. Formation obligatoire.",
+      type: "update",
+    },
+    {
+      id: 4,
+      title: "Réunion pédagogique",
+      date: "5 avr. 2025",
+      content: "Réunion obligatoire vendredi à 14h en salle A203.",
+      type: "meeting",
+    },
+    {
+      id: 5,
+      title: "Nouveau serveur de documents",
+      date: "1 avr. 2025",
+      content: "Le partage de cours se fait désormais via la plateforme centralisée.",
+      type: "info",
+    },
+  ];
+
+  const getTypeColor = (type) => {
+    switch (type) {
+      case 'important': return 'bg-red-500/20 border-red-500/40 text-red-300';
+      case 'update': return 'bg-blue-500/20 border-blue-500/40 text-blue-300';
+      case 'meeting': return 'bg-purple-500/20 border-purple-500/40 text-purple-300';
+      default: return 'bg-amber-500/20 border-amber-500/40 text-amber-300';
+    }
   };
 
   return (
-    <div className="p-6">
-      <h2 className="text-xl font-semibold mb-4">Planning — Demande de modification</h2>
-      <div className="bg-white border rounded p-4 max-w-xl">
-        <label className="block text-sm mb-2">Date souhaitée</label>
-        <input type="datetime-local" value={request.date} onChange={(e) => setRequest({ ...request, date: e.target.value })} className="border p-2 w-full mb-3" />
-        <label className="block text-sm mb-2">Motif</label>
-        <textarea value={request.reason} onChange={(e) => setRequest({ ...request, reason: e.target.value })} className="border p-2 w-full mb-3" />
-        <div className="flex gap-2">
-          <button onClick={submitRequest} className="px-4 py-2 bg-indigo-600 text-white rounded">Soumettre au Admin</button>
-          <button className="px-4 py-2 border rounded" onClick={() => navigate(-1)}>Annuler</button>
-        </div>
-      </div>
-    </div>
-  );
-}
+    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black text-gray-100 p-4 sm:p-6 md:p-8">
+      <div className="max-w-7xl mx-auto">
+        {/* === HEADER === */}
+        <motion.header
+          initial={{ opacity: 0, y: -24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }}
+          className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10"
+        >
+          <motion.h1
+            initial={{ opacity: 0, x: -24 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.15, duration: 0.6 }}
+            className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-amber-400 to-amber-300 bg-clip-text text-transparent"
+          >
+            Bonjour, Professeur !
+          </motion.h1>
 
-// --- Router wrapper that matches course id param to component props ---
-function CourseRouteWrapper() {
-  // extract id from path using window.location (simple approach since this is single-file demo)
-  const id = window.location.pathname.split('/').pop();
-  return <CoursePage courseId={id} />;
-}
+          <div className="flex items-center gap-4">
+            <motion.button
+              whileHover={{ scale: 1.15, backgroundColor: 'rgba(255,215,0,0.12)' }}
+              whileTap={{ scale: 0.95 }}
+              className="p-3 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 shadow-sm"
+              aria-label="Notifications"
+            >
+              <svg className="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              </svg>
+            </motion.button>
 
-export default function App() {
-  return (
-    <Router>
-      <div className="min-h-screen flex bg-gray-50">
-        <Sidebar />
-        <div className="flex-1 flex flex-col">
-          <Topbar />
-          <main className="flex-1 overflow-auto">
-            <Routes>
-              <Route path="/" element={<DashboardPage />} />
-              <Route path="/courses" element={<CoursesPage />} />
-              <Route path="/courses/:id" element={<CourseRouteWrapper />} />
-              <Route path="/students" element={<StudentsPage />} />
-              <Route path="/grades" element={<GradesPage />} />
-              <Route path="/absences" element={<AbsencesPage />} />
-              <Route path="/messages" element={<MessagesPage />} />
-              <Route path="/planning" element={<PlanningPage />} />
-            </Routes>
+            <motion.div
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.98 }}
+              className="flex items-center gap-3 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-2"
+            >
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center font-bold text-black text-sm shadow-md">
+                {profile.avatarInitials}
+              </div>
+              <div className="hidden sm:block">
+                <div className="text-sm font-semibold">{profile.nom}</div>
+                <div className="text-xs text-gray-400">{profile.role}</div>
+              </div>
+            </motion.div>
+          </div>
+        </motion.header>
+
+        
+
+        {/* === GRID PRINCIPAL === */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* SIDEBAR */}
+          <aside className="lg:col-span-1 space-y-6">
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              custom={0.5}
+              variants={cardVariant}
+              className="bg-gradient-to-b from-gray-900/70 to-black/50 backdrop-blur-xl p-6 rounded-2xl border border-amber-700/20 shadow-xl"
+            >
+              <div className="flex flex-col items-center text-center gap-5">
+                <motion.div
+                  whileHover={{ rotate: 8, scale: 1.05 }}
+                  className="w-24 h-24 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-xl font-bold text-black shadow-lg"
+                >
+                  {profile.avatarInitials}
+                </motion.div>
+                <div>
+                  <div className="text-lg font-bold text-white">{profile.nom}</div>
+                  <div className="text-sm text-gray-400">{profile.role}</div>
+                </div>
+                <Link
+                  to="/prof/profile"
+                  className="w-full mt-1 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-black font-semibold text-sm shadow-md hover:shadow-amber-500/40 transition-all duration-300"
+                >
+                  Voir le profil
+                </Link>
+                <div className="w-full mt-3 grid grid-cols-2 gap-3">
+                  <button className="text-center py-2.5 rounded-lg bg-white/5 text-sm border border-white/10 hover:bg-white/10 transition">
+                    Paramètres
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    className="text-center py-2.5 rounded-lg bg-gradient-to-r from-red-900/40 to-red-800/40 text-red-300 text-sm border border-red-700/40 hover:bg-red-900/60 transition"
+                  >
+                    Déconnexion
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25 }}
+              className="p-5 rounded-2xl bg-gray-900/50 backdrop-blur border border-amber-700/15"
+            >
+              <h3 className="text-sm font-bold text-amber-400 mb-4 flex items-center gap-2">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                Actions rapides
+              </h3>
+              <nav className="space-y-2.5">
+                {[
+                  { to: '/prof/appel', label: '📝 Faire l’appel' },
+                  { to: '/prof/cours', label: '📚 Partager un cours' },
+                  { to: '/prof/emploi', label: '📅 Emploi du temps' },
+                  { to: '/prof/notes', label: '📊 Saisir des notes' },
+                  { to: '/prof/chat', label: '💬 Chat ' },
+                  
+                ].map((item, idx) => (
+                  <motion.div
+                    key={idx}
+                    whileHover={{ x: 6, backgroundColor: 'rgba(255,215,0,0.1)' }}
+                    whileTap={{ scale: 0.99 }}
+                    className="rounded-xl overflow-hidden"
+                  >
+                    <Link
+                      to={item.to}
+                      className="block w-full px-4 py-3 text-sm font-medium text-gray-200 hover:text-amber-300 transition-colors"
+                    >
+                      {item.label}
+                    </Link>
+                  </motion.div>
+                ))}
+              </nav>
+            </motion.div>
+          </aside>
+
+          {/* CONTENU PRINCIPAL */}
+          <main className="lg:col-span-3 space-y-7">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              <motion.div
+                custom={1}
+                variants={cardVariant}
+                initial="hidden"
+                animate="visible"
+                whileHover={buttonHover}
+                className="p-6 rounded-2xl bg-gradient-to-br from-amber-500/8 to-amber-900/15 border border-amber-600/30 backdrop-blur-sm"
+              >
+                <div className="text-sm text-gray-300 mb-2">Taux de présence</div>
+                <div className="flex items-end gap-2">
+                  <div className="text-3xl font-extrabold text-amber-400">{stats.tauxPresence}%</div>
+                  <div className="text-xs text-gray-500">(ce semestre)</div>
+                </div>
+                <div className="mt-4 h-2.5 w-full bg-gray-800 rounded-full overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${stats.tauxPresence}%` }}
+                    transition={{ duration: 1.3, ease: 'easeOut' }}
+                    className="h-full rounded-full bg-gradient-to-r from-amber-500 to-amber-400"
+                  />
+                </div>
+              </motion.div>
+
+              <motion.div
+                custom={1.2}
+                variants={cardVariant}
+                initial="hidden"
+                animate="visible"
+                whileHover={buttonHover}
+                className="p-6 rounded-2xl bg-gray-900/60 border border-gray-700/40 backdrop-blur-sm"
+              >
+                <div className="text-sm text-gray-300 mb-2">Nombre d’étudiants</div>
+                <div className="text-3xl font-bold text-white">{stats.nbEtudiants}</div>
+                <div className="mt-2 text-xs text-gray-500">Inscrits à vos cours</div>
+              </motion.div>
+
+              <motion.div
+                custom={1.4}
+                variants={cardVariant}
+                initial="hidden"
+                animate="visible"
+                whileHover={buttonHover}
+                className="p-6 rounded-2xl bg-gray-900/60 border border-gray-700/40 backdrop-blur-sm"
+              >
+                <div className="text-sm text-gray-300 mb-2">Cours en cours</div>
+                <div className="text-lg font-semibold text-amber-300">{stats.coursEnCours}</div>
+                <div className="text-sm text-gray-400 mt-1">{stats.heure}</div>
+              </motion.div>
+            </div>
+
+            {/* Section activité */}
+            <motion.section
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.35 }}
+              className="rounded-2xl bg-gray-900/50 backdrop-blur border border-gray-700/30 p-6"
+            >
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <div>
+                  <h2 className="text-xl font-bold text-amber-400">Prochaine séance</h2>
+                  <p className="text-gray-400">{stats.coursEnCours} — {stats.heure}</p>
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  <motion.button
+                    whileHover={buttonHover}
+                    whileTap={{ scale: 0.97 }}
+                    className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-black text-sm font-medium shadow-md"
+                  >
+                    Gérer le cours
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.04, borderColor: 'rgba(255,215,0,0.5)' }}
+                    whileTap={{ scale: 0.98 }}
+                    className="px-5 py-2.5 rounded-xl border border-gray-600 text-gray-200 text-sm font-medium hover:border-amber-500/60 hover:text-amber-300 transition"
+                  >
+                    Emploi du temps
+                  </motion.button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                {[
+                  { title: 'Présences récentes', value: '38 / 42 présents', color: 'text-emerald-400' },
+                  { title: 'Devoirs à corriger', value: '3 en attente', color: 'text-amber-400' },
+                  { title: 'Messages non lus', value: '2 messages', color: 'text-sky-400' },
+                ].map((item, idx) => (
+                  <motion.div
+                    key={idx}
+                    whileHover={{ y: -4, borderColor: 'rgba(255,215,0,0.3)' }}
+                    className="p-5 rounded-xl bg-black/30 border border-gray-800/70"
+                  >
+                    <div className="text-xs text-gray-500">{item.title}</div>
+                    <div className={`mt-1.5 text-sm font-semibold ${item.color}`}>{item.value}</div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.section>
+            {/* === ANNONCES SECTION (placée juste après le header) === */}
+        <motion.section
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25 }}
+          className="mb-10"
+        >
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="text-xl font-bold text-amber-400 flex items-center gap-2">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3.216A2.98 2.98 0 0121 6v7.5" />
+              </svg>
+              Annonces officielles
+            </h2>
+            <span className="text-sm text-gray-500 hidden sm:block">Pour tous les enseignants</span>
+          </div>
+
+          <div className="relative">
+            <div className="absolute top-1/2 -right-4 w-8 h-8 bg-gradient-to-l from-gray-950 to-transparent pointer-events-none z-10 hidden md:block"></div>
+            <div className="flex overflow-x-auto pb-3 -mx-2 px-2 scrollbar-hide">
+              {annonces.map((annonce, idx) => (
+                <motion.article
+                  key={annonce.id}
+                  initial={{ opacity: 0, x: 24 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3 + idx * 0.06 }}
+                  whileHover={{ y: -5, boxShadow: '0 10px 25px -5px rgba(0,0,0,0.5)' }}
+                  className={`flex-shrink-0 w-80 mx-2 p-5 rounded-2xl border backdrop-blur-sm shadow-lg ${getTypeColor(annonce.type)}`}
+                >
+                  <div className="space-y-2">
+                    <h3 className="font-bold text-white">{annonce.title}</h3>
+                    <p className="text-sm text-gray-200 leading-relaxed">{annonce.content}</p>
+                    <div className="text-xs text-gray-300 mt-2">{annonce.date}</div>
+                  </div>
+                </motion.article>
+              ))}
+            </div>
+          </div>
+        </motion.section>
           </main>
         </div>
       </div>
-    </Router>
+      
+    </div>
   );
 }
-
-// Usage notes (copy to project README):
-// - This file expects Tailwind CSS to be configured in the project.
-// - Replace mock data with real API/Firebase calls in useEffect hooks.
-// - Add form validation and error handling for production.
-// - The app uses react-router; install it via `npm i react-router-dom`.

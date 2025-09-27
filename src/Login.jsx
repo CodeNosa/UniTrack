@@ -11,15 +11,29 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
+  e.preventDefault();
+  if (!username || !password) {
+    alert("Veuillez remplir tous les champs.");
+    return;
+  }
 
-    // Simulation de connexion
-    setTimeout(() => {
-      console.log({ username, password });
-      setIsLoading(false);
-    }, 2000);
-  };
+  setIsLoading(true);
+
+  setTimeout(() => {
+    // Option 1 : redirection immédiate (sans vérif)
+    // navigate("/prof");
+
+    // Option 2 : avec vérification simple
+    if (username === "prof" && password === "123456") {
+      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("userRole", "prof");
+      navigate("/prof");
+    } else {
+      alert("Identifiants incorrects. Essayez : prof / 123456");
+    }
+    setIsLoading(false);
+  }, 1500);
+};
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
